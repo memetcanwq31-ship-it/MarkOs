@@ -5,6 +5,4 @@
    Android Shelle Hoş Geldiniz
 ╚═══════════════════════════╝
 
-# Markos Terminal Arayüzü Gelişecektir
-# Yeni Araçlarimiz Ve Yeni Toolslarimiz 
-# Sizler için Gelecektir 
+# Markos Terminal Arayüzü Gelişecektir Yeni Araçlarimiz Buraya Gelecektir Güncellemeler Gelecektir Yakinda Termuxdan Ayrilip Özel Android Terminal Olusturup github ile Oradan Devam Edecegiz İyi Günler 
