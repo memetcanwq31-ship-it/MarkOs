@@ -1,0 +1,43 @@
+{
+  "repository": "MarkOS Packages",
+  "version": "1.0",
+  "author": "MarkOS",
+  "packages": [
+    {
+      "name": "python",
+      "version": "3.13.0",
+      "description": "Python programming language",
+      "download": "https://github.com/markospm39/markos-packages/releases/download/python/python.zip"
+    },
+    {
+      "name": "python2",
+      "version": "2.7.18",
+      "description": "Legacy Python 2",
+      "download": "https://github.com/markospm39/markos-packages/releases/download/python2/python2.zip"
+    },
+    {
+      "name": "python3",
+      "version": "3.13.0",
+      "description": "Latest Python",
+      "download": "https://github.com/markospm39/markos-packages/releases/download/python3/python3.zip"
+    },
+    {
+      "name": "git",
+      "version": "2.48.1",
+      "description": "Git version control",
+      "download": "https://github.com/markospm39/markos-packages/releases/download/git/git.zip"
+    },
+    {
+      "name": "nano",
+      "version": "8.3",
+      "description": "Nano text editor",
+      "download": "https://github.com/markospm39/markos-packages/releases/download/nano/nano.zip"
+    },
+    {
+      "name": "busybox",
+      "version": "1.37.0",
+      "description": "BusyBox utilities",
+      "download": "https://github.com/markospm39/markos-packages/releases/download/busybox/busybox.zip"
+    }
+  ]
+}
