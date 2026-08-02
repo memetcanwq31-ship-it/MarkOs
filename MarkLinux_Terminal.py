@@ -12,7 +12,6 @@ import platform
 import subprocess
 import shlex
 import time
-import json
 
 # ─── Renk Kodları ──────────────────────────────────────
 C_RESET   = "\033[0m"
@@ -112,7 +111,7 @@ class MarkLinuxTerminal:
         return f"{C_GREEN}{user}@{host}{C_RESET}:{C_BLUE}{cwd}{C_RESET}{sym} "
 
     def _run(self, parts, timeout=10):
-        """Subprocess ile komut çalıştır."""
+        """Subprocess ile komut calistir."""
         try:
             res = subprocess.run(parts, capture_output=True, text=True, timeout=timeout)
             out = res.stdout
@@ -120,14 +119,14 @@ class MarkLinuxTerminal:
                 out += res.stderr
             return out
         except subprocess.TimeoutExpired:
-            return f"{C_RED}Hata: Komut zaman aşımına uğradı (>{timeout}s){C_RESET}\n"
+            return f"{C_RED}Hata: Komut zaman asimina ugradi (>{timeout}s){C_RESET}\n"
         except FileNotFoundError:
-            return f"{C_RED}Hata: '{parts[0]}' bulunamadı{C_RESET}\n"
+            return f"{C_RED}Hata: '{parts[0]}' bulunamadi{C_RESET}\n"
         except Exception as e:
             return f"{C_RED}Hata: {e}{C_RESET}\n"
 
     def _spin(self, msg, duration=0.5):
-        ""️ Küçük animasyon."""
+        """Kucuk animasyon."""
         chars = "|/-\\"
         for _ in range(int(duration * 10)):
             for c in chars:
@@ -144,7 +143,7 @@ class MarkLinuxTerminal:
                 h, rem = divmod(rem, 3600)
                 m, s = divmod(rem, 60)
                 parts = []
-                if d: parts.append(f"{d} gün")
+                if d: parts.append(f"{d} gun")
                 if h: parts.append(f"{h} saat")
                 if m: parts.append(f"{m} dk")
                 parts.append(f"{s} sn")
@@ -165,7 +164,7 @@ class MarkLinuxTerminal:
                 free = mem.get("MemFree", 0) // 1024
                 avail = mem.get("MemAvailable", free) // 1024
                 used = total - avail
-                return f"Toplam: {total}M / Kullanılan: {used}M / Boş: {avail}M"
+                return f"Toplam: {total}M / Kullanilan: {used}M / Bos: {avail}M"
             except:
                 pass
         return "Bilinmiyor"
@@ -189,13 +188,13 @@ class MarkLinuxTerminal:
     def _all_commands(self):
         return sorted(set(list(self.cmds.keys()) + list(ALIASES.keys()) + EXTERNAL_COMMANDS))
 
-    # ─── Komut İşleyici ──────────────────────────────────
+    # ─── Komut Isleyci ──────────────────────────────────
     def execute(self, command):
         command = command.strip()
         if not command:
             return ""
 
-        # Alias çözümle
+        # Alias cozumle
         first = command.split()[0]
         if first in ALIASES:
             command = command.replace(first, ALIASES[first], 1)
@@ -208,49 +207,49 @@ class MarkLinuxTerminal:
             args = shlex.split(command)[1:]
             return self.cmds[first](args)
 
-        # Dış komut dene
+        # Dis komut dene
         parts = shlex.split(command)
         if parts and shutil.which(parts[0]):
             return self._run(parts)
 
-        return f"{C_RED}marklinux: {first}: komut bulunamadı{C_RESET}\n"
+        return f"{C_RED}marklinux: {first}: komut bulunamadi{C_RESET}\n"
 
-    # ─── Komut Tanımları ─────────────────────────────────
+    # ─── Komut Tanimlari ─────────────────────────────────
     def _cmd_help(self, args):
         return f"""{C_BOLD}{C_GREEN}╔══════════════════════════════════════════════════╗
 ║           MarkLinux Terminal v{VERSION}                ║
 ╠══════════════════════════════════════════════════╣
-║  {C_YELLOW}help{C_GREEN}      - Bu yardım mesajını gösterir            ║
-║  {C_YELLOW}clear{C_GREEN}     - Ekranı temizler                       ║
+║  {C_YELLOW}help{C_GREEN}      - Bu yardim mesajini gosterir            ║
+║  {C_YELLOW}clear{C_GREEN}     - Ekrani temizler                       ║
 ║  {C_YELLOW}version{C_GREEN}   - Versiyon bilgisi                      ║
 ║  {C_YELLOW}date{C_GREEN}      - Tarih ve saat                        ║
 ║  {C_YELLOW}time{C_GREEN}      - Sadece saat                          ║
-║  {C_YELLOW}whoami{C_GREEN}    - Mevcut kullanıcı                      ║
-║  {C_YELLOW}hostname{C_GREEN}  - Sistem adı                             ║
-║  {C_YELLOW}pwd{C_GREEN}       - Bulunduğun dizin                     ║
+║  {C_YELLOW}whoami{C_GREEN}    - Mevcut kullanici                      ║
+║  {C_YELLOW}hostname{C_GREEN}  - Sistem adi                             ║
+║  {C_YELLOW}pwd{C_GREEN}       - Bulundugun dizin                     ║
 ║  {C_YELLOW}ls{C_GREEN}        - Dosya listele                        ║
-║  {C_YELLOW}cat{C_GREEN}       - Dosya içeriği oku                    ║
-║  {C_YELLOW}echo{C_GREEN}      - Metin yazdır                         ║
-║  {C_YELLOW}cd{C_GREEN}        - Dizin değiştir                      ║
-║  {C_YELLOW}mkdir{C_GREEN}     - Dizin oluştur                        ║
+║  {C_YELLOW}cat{C_GREEN}       - Dosya icerigi oku                    ║
+║  {C_YELLOW}echo{C_GREEN}      - Metin yazdir                         ║
+║  {C_YELLOW}cd{C_GREEN}        - Dizin degistir                      ║
+║  {C_YELLOW}mkdir{C_GREEN}     - Dizin olustur                        ║
 ║  {C_YELLOW}rm{C_GREEN}        - Dosya/dizin sil                      ║
 ║  {C_YELLOW}uname{C_GREEN}     - Kernel bilgisi                       ║
-║  {C_YELLOW}uptime{C_GREEN}    - Sistem çalışma süresi                ║
-║  {C_YELLOW}df{C_GREEN}        - Disk kullanımı                       ║
-║  {C_YELLOW}free{C_GREEN}      - Bellek kullanımı                     ║
-║  {C_YELLOW}ps{C_GREEN}        - Çalışan süreçler                     ║
-║  {C_YELLOW}kill{C_GREEN}      - Süreç sonlandır                      ║
-║  {C_YELLOW}ping{C_GREEN}      - Ağ testi                             ║
-║  {C_YELLOW}sysinfo{C_GREEN}   - Sistem özeti                         ║
-║  {C_YELLOW}cpuinfo{C_GREEN}   - İşlemci bilgisi                      ║
-║  {C_YELLOW}meminfo{C_GREEN}   - Bellek detayları                     ║
-║  {C_YELLOW}ipinfo{C_GREEN}    - Ağ arayüz bilgisi                    ║
-║  {C_YELLOW}history{C_GREEN}   - Komut geçmişi                        ║
-║  {C_YELLOW}head{C_GREEN}      - Dosya başını göster                  ║
-║  {C_YELLOW}tail{C_GREEN}      - Dosya sonunu göster                  ║
-║  {C_YELLOW}wc{C_GREEN}        - Satır/kelime/byte say                ║
+║  {C_YELLOW}uptime{C_GREEN}    - Sistem calisma suresi                ║
+║  {C_YELLOW}df{C_GREEN}        - Disk kullanimi                       ║
+║  {C_YELLOW}free{C_GREEN}      - Bellek kullanimi                     ║
+║  {C_YELLOW}ps{C_GREEN}        - Calisan surecler                     ║
+║  {C_YELLOW}kill{C_GREEN}      - Surec sonlandir                      ║
+║  {C_YELLOW}ping{C_GREEN}      - Ag testi                             ║
+║  {C_YELLOW}sysinfo{C_GREEN}   - Sistem ozeti                         ║
+║  {C_YELLOW}cpuinfo{C_GREEN}   - Islemci bilgisi                      ║
+║  {C_YELLOW}meminfo{C_GREEN}   - Bellek detaylari                     ║
+║  {C_YELLOW}ipinfo{C_GREEN}    - Ag arayuz bilgisi                    ║
+║  {C_YELLOW}history{C_GREEN}   - Komut gecmisi                        ║
+║  {C_YELLOW}head{C_GREEN}      - Dosya basini goster                  ║
+║  {C_YELLOW}tail{C_GREEN}      - Dosya sonunu goster                  ║
+║  {C_YELLOW}wc{C_GREEN}        - Satir/kelime/byte say                ║
 ║  {C_YELLOW}grep{C_GREEN}      - Dosyada ara                        ║
-║  {C_YELLOW}exit{C_GREEN}      - Terminalden çık                      ║
+║  {C_YELLOW}exit{C_GREEN}      - Terminalden cik                      ║
 ╚══════════════════════════════════════════════════╝{C_RESET}
 """
 
@@ -258,7 +257,7 @@ class MarkLinuxTerminal:
         return "\033[2J\033[H"
 
     def _cmd_exit(self, args):
-        return f"{C_YELLOW}Çıkış yapılıyor...{C_RESET}\n"
+        return f"{C_YELLOW}Cikis yapiliyor...{C_RESET}\n"
 
     def _cmd_version(self, args):
         return f"MarkLinux Terminal v{VERSION}\n"
@@ -283,7 +282,6 @@ class MarkLinuxTerminal:
         flags = ["-la"] if "-l" in args or "-a" in args else []
         if shutil.which("ls"):
             return self._run(["ls"] + (flags if flags else []) + [path])
-        # Python fallback
         try:
             items = os.listdir(path)
             return "\n".join(items) + "\n"
@@ -292,11 +290,10 @@ class MarkLinuxTerminal:
 
     def _cmd_cat(self, args):
         if not args:
-            return "cat: kullanım: cat <dosya>\n"
+            return "cat: kullanim: cat <dosya>\n"
         path = args[0]
-        # Path traversal koruması
         if ".." in path:
-            return f"{C_RED}cat: Güvenlik: '..' içeren yollar engellendi{C_RESET}\n"
+            return f"{C_RED}cat: Guvenlik: '..' iceren yollar engellendi{C_RESET}\n"
         try:
             with open(path, "r", encoding="utf-8", errors="ignore") as f:
                 return f.read()
@@ -316,7 +313,7 @@ class MarkLinuxTerminal:
 
     def _cmd_mkdir(self, args):
         if not args:
-            return "mkdir: kullanım: mkdir <dizin>\n"
+            return "mkdir: kullanim: mkdir <dizin>\n"
         try:
             os.makedirs(args[0], exist_ok=True)
             return ""
@@ -325,7 +322,7 @@ class MarkLinuxTerminal:
 
     def _cmd_rm(self, args):
         if not args:
-            return "rm: kullanım: rm <dosya/dizin>\n"
+            return "rm: kullanim: rm <dosya/dizin>\n"
         path = args[0]
         recursive = "-r" in args or "-rf" in args
         try:
@@ -334,7 +331,7 @@ class MarkLinuxTerminal:
             elif os.path.isfile(path):
                 os.remove(path)
             else:
-                return f"rm: '{path}' bir dizin; silmek için -r kullan\n"
+                return f"rm: '{path}' bir dizin; silmek icin -r kullan\n"
             return ""
         except Exception as e:
             return f"rm: {e}\n"
@@ -352,7 +349,7 @@ class MarkLinuxTerminal:
     def _cmd_df(self, args):
         if shutil.which("df"):
             return self._run(["df", "-h"] + args)
-        return f"{C_RED}df: komut bulunamadı{C_RESET}\n"
+        return f"{C_RED}df: komut bulunamadi{C_RESET}\n"
 
     def _cmd_free(self, args):
         if shutil.which("free"):
@@ -362,35 +359,33 @@ class MarkLinuxTerminal:
     def _cmd_ps(self, args):
         if shutil.which("ps"):
             return self._run(["ps", "aux"])
-        return f"{C_RED}ps: komut bulunamadı{C_RESET}\n"
+        return f"{C_RED}ps: komut bulunamadi{C_RESET}\n"
 
     def _cmd_kill(self, args):
         if not args:
-            return "kill: kullanım: kill <pid>\n"
+            return "kill: kullanim: kill <pid>\n"
         try:
             pid = int(args[-1])
             os.kill(pid, 9)
-            return f"PID {pid} sonlandırıldı\n"
+            return f"PID {pid} sonlandirildi\n"
         except ValueError:
-            return f"kill: '{args[-1]}' geçersiz PID\n"
+            return f"kill: '{args[-1]}' gecersiz PID\n"
         except ProcessLookupError:
-            return f"kill: PID {args[-1]} bulunamadı\n"
+            return f"kill: PID {args[-1]} bulunamadi\n"
         except PermissionError:
-            return f"kill: PID {args[-1]} için yetki yok\n"
+            return f"kill: PID {args[-1]} icin yetki yok\n"
 
     def _cmd_ping(self, args):
         if not args:
-            return "ping: kullanım: ping <hedef>\n"
+            return "ping: kullanim: ping <hedef>\n"
         target = args[0]
-        # Güvenlik: shell injection karakterlerini engelle
         if any(c in target for c in ";|&$`\"'\x00"):
-            return f"{C_RED}ping: Geçersiz hedef karakteri{C_RESET}\n"
+            return f"{C_RED}ping: Gecersiz hedef karakteri{C_RESET}\n"
         if shutil.which("ping"):
             flag = "-n" if sys.platform == "win32" else "-c"
             return self._run(["ping", flag, "4", target], timeout=15)
-        # Simülasyon modu
         self._spin(f"{target} pingleniyor", 0.8)
-        return f"--- {target} ping istatistikleri ---\n4 paket gönderildi, 4 alındı, %0 kayıp\n"
+        return f"--- {target} ping istatistikleri ---\n4 paket gonderildi, 4 alindi, %0 kayip\n"
 
     def _cmd_sysinfo(self, args):
         lines = [f"{C_BOLD}=== MarkLinux Sistem Bilgisi ==={C_RESET}"]
@@ -398,7 +393,7 @@ class MarkLinuxTerminal:
         lines.append(f"Uptime   : {self._uptime_str()}")
         lines.append(f"Bellek   : {self._mem_str()}")
         lines.append(f"Tarih    : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        lines.append(f"Kullanıcı: {getpass.getuser()}")
+        lines.append(f"Kullanici: {getpass.getuser()}")
         lines.append(f"Hostname : {socket.gethostname()}")
         lines.append(f"Python   : {platform.python_version()}")
         lines.append(f"Platform : {platform.platform()}")
@@ -413,7 +408,7 @@ class MarkLinuxTerminal:
                     return f.read()
             except Exception as e:
                 return f"cpuinfo: {e}\n"
-        return f"İşlemci: {platform.processor() or platform.machine()}\nMimari : {platform.machine()}\n"
+        return f"Islemci: {platform.processor() or platform.machine()}\nMimari : {platform.machine()}\n"
 
     def _cmd_meminfo(self, args):
         if os.path.exists("/proc/meminfo"):
@@ -444,7 +439,7 @@ class MarkLinuxTerminal:
 
     def _cmd_head(self, args):
         if not args:
-            return "head: kullanım: head <dosya> [satır_sayısı]\n"
+            return "head: kullanim: head <dosya> [satir_sayisi]\n"
         path = args[0]
         n = 10
         if len(args) > 1:
@@ -461,7 +456,7 @@ class MarkLinuxTerminal:
 
     def _cmd_tail(self, args):
         if not args:
-            return "tail: kullanım: tail <dosya> [satır_sayısı]\n"
+            return "tail: kullanim: tail <dosya> [satir_sayisi]\n"
         path = args[0]
         n = 10
         if len(args) > 1:
@@ -478,7 +473,7 @@ class MarkLinuxTerminal:
 
     def _cmd_wc(self, args):
         if not args:
-            return "wc: kullanım: wc <dosya>\n"
+            return "wc: kullanim: wc <dosya>\n"
         path = args[0]
         try:
             with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -492,7 +487,7 @@ class MarkLinuxTerminal:
 
     def _cmd_grep(self, args):
         if len(args) < 2:
-            return "grep: kullanım: grep <kelime> <dosya>\n"
+            return "grep: kullanim: grep <kelime> <dosya>\n"
         pattern = args[0]
         path = args[1]
         try:
@@ -501,7 +496,7 @@ class MarkLinuxTerminal:
                 for i, line in enumerate(f, 1):
                     if pattern in line:
                         out += f"{C_YELLOW}{i:4d}{C_RESET}:{line}"
-                return out if out else f"'{pattern}' bulunamadı\n"
+                return out if out else f"'{pattern}' bulunamadi\n"
         except Exception as e:
             return f"grep: {e}\n"
 
@@ -510,8 +505,8 @@ class MarkLinuxTerminal:
 def main():
     term = MarkLinuxTerminal()
     print(BANNER)
-    print(f"{C_GREEN}MarkLinux Terminal v{VERSION}{C_RESET} — {C_YELLOW}Kali Linux tarzı terminal{C_RESET}")
-    print(f"{C_CYAN}Yardım için 'help', çıkış için 'exit' yazın.{C_RESET}\n")
+    print(f"{C_GREEN}MarkLinux Terminal v{VERSION}{C_RESET} — {C_YELLOW}Kali Linux tarzi terminal{C_RESET}")
+    print(f"{C_CYAN}Yardim icin 'help', cikis icin 'exit' yazin.{C_RESET}\n")
 
     # Tab tamamlama
     try:
@@ -529,7 +524,7 @@ def main():
         try:
             command = input(term.prompt())
         except (EOFError, KeyboardInterrupt):
-            print(f"\n{C_YELLOW}Çıkış yapılıyor...{C_RESET}")
+            print(f"\n{C_YELLOW}Cikis yapiliyor...{C_RESET}")
             break
         if not command.strip():
             continue
@@ -539,7 +534,7 @@ def main():
             break
 
     term._save_history()
-    print(f"{C_GREEN}MarkLinux kapatıldı. Görüşmek üzere!{C_RESET}")
+    print(f"{C_GREEN}MarkLinux kapatildi. Gorusmek uzere!{C_RESET}")
 
 
 if __name__ == "__main__":
